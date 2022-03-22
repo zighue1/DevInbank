@@ -1,6 +1,6 @@
 ﻿namespace Modulo_2_Projeto_1
 {
-    public class RegistroTransferencia
+    public class RegistroTransferenciaGeral
     {
         public int NumeroContaOrigem { get; set; }
         public int? NumeroContaDestino { get; set; }
@@ -14,14 +14,12 @@
             Transferencia = 1,
             Saque = 2,
             Deposito = 3,
-            Investimento = 4,
         }
 
 
         //TIPO 1 = TRANSFERENCIA DE CONTA
-        public RegistroTransferencia(int tipo, int numeroContaOrigem, int numeroContaDestino, double valor)
+        public RegistroTransferenciaGeral(int tipo, int numeroContaOrigem, int numeroContaDestino, double valor)
         {
-            Mock.listaRegistroTransferencias.Add(new RegistroTransferenciaGeral(tipo, numeroContaOrigem, numeroContaDestino, valor));
             this.tipo = tipo;
             NumeroContaOrigem = numeroContaOrigem;
             NumeroContaDestino = numeroContaDestino;
@@ -31,10 +29,8 @@
         }
 
         //TIPO 2 = SAQUE // TIPO 3 = DEPOSITO
-        public RegistroTransferencia(int tipo, int numeroContaOrigem, double valor)
+        public RegistroTransferenciaGeral(int tipo, int numeroContaOrigem, double valor)
         {
-            Mock.listaRegistroTransferencias.Add(new RegistroTransferenciaGeral(tipo, numeroContaOrigem, valor));
-
             this.tipo = tipo;
             NumeroContaOrigem = numeroContaOrigem;
             Valor = valor;

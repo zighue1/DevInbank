@@ -30,8 +30,6 @@ namespace Modulo_2_Projeto_1.Controllers
         [HttpGet("Contas/tipo/{tipoConta}")]
         public List<Conta> GetList([FromRoute] int tipoConta)
         {
-            if (tipoConta == 0)
-                return Mock.lista;
             if (tipoConta == 1)
             {
                 List<Conta> retorno = new List<Conta>();
@@ -40,7 +38,23 @@ namespace Modulo_2_Projeto_1.Controllers
                         retorno.Add(conta);
                 return retorno;
             }
-            return null;
+            if (tipoConta == 2)
+            {
+                List<Conta> retorno = new List<Conta>();
+                foreach (Conta conta in Mock.lista)
+                    if (conta.GetType() == typeof(ContaPoupanca))
+                        retorno.Add(conta);
+                return retorno;
+            }
+            if (tipoConta == 2)
+            {
+                List<Conta> retorno = new List<Conta>();
+                foreach (Conta conta in Mock.lista)
+                    if (conta.GetType() == typeof(ContaInvestimento))
+                        retorno.Add(conta);
+                return retorno;
+            }
+            return Mock.lista;
         }
       
         //DEPOSITAR UM VALOR EM UMA CONTA
@@ -50,7 +64,7 @@ namespace Modulo_2_Projeto_1.Controllers
             foreach (Conta conta in Mock.lista)
                 if (conta.NumeroDeConta == NumeroDaConta)
                 {
-                    conta.Depositar(Valor);
+                    conta.Depositar(Valor,(int) RegistroTransferencia.TiposDeTransferencia.Deposito);
                     return 0;
                 }
 
@@ -104,15 +118,15 @@ namespace Modulo_2_Projeto_1.Controllers
                     }
                     if (tipoConta == 2)
                     {
-                        // Conta c = new ContaCorrente(value.Nome, value.CPF, value.Endereco, value.RendaMensal, value.Agencia, 0);
-                        // Mock.lista.Add(c);
-                        // return c.NumeroDeConta;
+                         Conta c = new ContaPoupanca(value.Nome, value.CPF, value.Endereco, value.RendaMensal, value.Agencia, 0);
+                         Mock.lista.Add(c);
+                         return c.NumeroDeConta;
                     }
                     if (tipoConta == 3)
                     {
-                        // Conta c = new ContaCorrente(value.Nome, value.CPF, value.Endereco, value.RendaMensal, value.Agencia, 0);
-                        // Mock.lista.Add(c);
-                        // return (int)Mock.Respostas.ContaCriada;
+                         Conta c = new ContaInvestimento(value.Nome, value.CPF, value.Endereco, value.RendaMensal, value.Agencia, 0, value.tipoInvestimento);
+                         Mock.lista.Add(c);
+                        return c.NumeroDeConta;
                     }
 
                 }
@@ -128,8 +142,8 @@ namespace Modulo_2_Projeto_1.Controllers
         [HttpPost("Transferencia")]
         public int PostTransferencia([FromBody] TransferenciaDTO dados)
         {
-            Conta Origem = null;
-            Conta Destino = null;
+            Conta? Origem = null;
+            Conta? Destino = null;
             foreach (Conta c in Mock.lista)
             {
                 if(c.NumeroDeConta == dados.ContaOrigem)
@@ -142,8 +156,9 @@ namespace Modulo_2_Projeto_1.Controllers
                 Origem.Transferencia(dados.Valor, Destino);
                 return 0;
             }
-            catch(Exception ex)
+            catch(Exception e)
             {
+                Console.WriteLine(e);
                 return 1;
             }   
         }
@@ -175,6 +190,16 @@ namespace Modulo_2_Projeto_1.Controllers
                 if (c.GetType() == typeof(ContaInvestimento) && c.NumeroDeConta == NumeroConta)
                     return ((ContaInvestimento)c).SimularInvestimento(i);
             return 0;
+        }
+
+        [HttpGet("total-investimento")]
+        public double getInvestimentoTotal()
+        {
+            double total = 0;
+            foreach (Conta c in Mock.lista)
+                if (c.GetType() == typeof(ContaInvestimento))
+                    total += c.Saldo;
+            return total;
         }
     }
 }

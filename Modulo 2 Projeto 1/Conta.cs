@@ -42,10 +42,16 @@ namespace Modulo_2_Projeto_1
                 
             return 0;
         }
-        public virtual void Depositar(double valor) {
+        public virtual void Depositar(double valor, int tipo) {
             Saldo += valor;
             Transferencias.Add(new RegistroTransferencia((int)RegistroTransferencia.TiposDeTransferencia.Deposito, NumeroDeConta, valor));
 
+        }
+     
+        public void Depositar(double valor, Conta Origem)
+        {
+            Saldo += valor;
+            Transferencias.Add(new RegistroTransferencia((int)RegistroTransferencia.TiposDeTransferencia.Transferencia, Origem.NumeroDeConta, NumeroDeConta, valor));
         }
         public virtual double VerificarSaldo() { return Saldo; }
         public virtual List<RegistroTransferencia> Extrato() {
@@ -53,12 +59,12 @@ namespace Modulo_2_Projeto_1
         }
         public virtual void Transferencia(double valor, Conta contaDestino)
         {
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday || DateTime.Now.DayOfWeek == DayOfWeek.Saturday)
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Sunday || DateTime.Now.DayOfWeek == DayOfWeek.Saturday || contaDestino.NumeroDeConta == NumeroDeConta)
                 return;
             if (valor < Saldo)
             {
                 Saldo -= valor;
-                contaDestino.Depositar(valor);
+                contaDestino.Depositar(valor, this);
                 Transferencias.Add(new RegistroTransferencia((int)RegistroTransferencia.TiposDeTransferencia.Transferencia, NumeroDeConta,contaDestino.NumeroDeConta, valor));
             }
         }
@@ -98,8 +104,9 @@ namespace Modulo_2_Projeto_1
                 if(Convert.ToInt32(dados.RendaMensal) < 0)
                     return (int)(Mock.DadosCriarAcc.RendaMensalInvalida);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
+                Console.WriteLine(e);
                 return (int)(Mock.DadosCriarAcc.RendaMensalInvalida);
             }
 
