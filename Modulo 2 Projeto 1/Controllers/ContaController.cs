@@ -22,8 +22,10 @@ namespace Modulo_2_Projeto_1.Controllers
         [HttpGet("{id}")]
         public Conta Get(int id)
         {
-            Conta j = Mock.lista[id];
-            return j;
+            foreach (Conta conta in Mock.lista)
+                if(conta.NumeroDeConta == id)
+                    return conta;
+            return null;
         }
 
         // PROCURAR CONTAS POR TIPO
